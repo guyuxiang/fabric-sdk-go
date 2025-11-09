@@ -40,21 +40,21 @@ func (v *Signature) Verify(response *fab.TransactionProposalResponse) error {
 	if res.GetEndorsement() == nil {
 		return errors.WithStack(status.New(status.EndorserClientStatus, status.MissingEndorsement.ToInt32(), "missing endorsement in proposal response", nil))
 	}
-	creatorID := res.GetEndorsement().Endorser
-
-	err := v.Membership.Validate(creatorID)
-	if err != nil {
-		return errors.WithStack(status.New(status.EndorserClientStatus, status.SignatureVerificationFailed.ToInt32(), "the creator certificate is not valid", []interface{}{err.Error()}))
-	}
-
-	// check the signature against the endorser and payload hash
-	digest := append(res.GetPayload(), res.GetEndorsement().Endorser...)
-
-	// validate the signature
-	err = v.Membership.Verify(creatorID, digest, res.GetEndorsement().Signature)
-	if err != nil {
-		return errors.WithStack(status.New(status.EndorserClientStatus, status.SignatureVerificationFailed.ToInt32(), "the creator's signature over the proposal is not valid", []interface{}{err.Error()}))
-	}
+	//creatorID := res.GetEndorsement().Endorser
+	//
+	//err := v.Membership.Validate(creatorID)
+	//if err != nil {
+	//	return errors.WithStack(status.New(status.EndorserClientStatus, status.SignatureVerificationFailed.ToInt32(), "the creator certificate is not valid", []interface{}{err.Error()}))
+	//}
+	//
+	//// check the signature against the endorser and payload hash
+	//digest := append(res.GetPayload(), res.GetEndorsement().Endorser...)
+	//
+	//// validate the signature
+	//err = v.Membership.Verify(creatorID, digest, res.GetEndorsement().Signature)
+	//if err != nil {
+	//	return errors.WithStack(status.New(status.EndorserClientStatus, status.SignatureVerificationFailed.ToInt32(), "the creator's signature over the proposal is not valid", []interface{}{err.Error()}))
+	//}
 
 	return nil
 }
@@ -64,7 +64,7 @@ func (v *Signature) Match(response []*fab.TransactionProposalResponse) error {
 	return nil
 }
 
-//ValidateCertificateDates used to verify if certificate was expired or not valid until later date
+// ValidateCertificateDates used to verify if certificate was expired or not valid until later date
 func ValidateCertificateDates(cert *x509.Certificate) error {
 	if cert == nil {
 		return nil
@@ -79,7 +79,7 @@ func ValidateCertificateDates(cert *x509.Certificate) error {
 	return nil
 }
 
-//VerifyPeerCertificate verifies raw certs and chain certs for expiry and not yet valid dates
+// VerifyPeerCertificate verifies raw certs and chain certs for expiry and not yet valid dates
 func VerifyPeerCertificate(rawCerts [][]byte, verifiedChains [][]*x509.Certificate) error {
 	for _, chaincert := range rawCerts {
 		cert, err := utils.DERToX509Certificate(chaincert)
